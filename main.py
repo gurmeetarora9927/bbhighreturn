@@ -34,7 +34,7 @@ dfSPY.reset_index(inplace=True)
 # Techincal Indicators
 dfSPY["EMA200"] = ta.ema(dfSPY.Close, length=200)  # EMA
 dfSPY["EMA150"] = ta.ema(dfSPY.Close, length=150)  # EMA2
-dfSPY["RSI"] = ta.rsi(dfSPY.Close, length=12, std=2.0)  # RSI
+dfSPY["RSI"] = ta.rsi(dfSPY.Close, length=12)  # RSI
 
 my_bbands = ta.bbands(dfSPY.Close, length=14, std=2.0)
 my_bbands[0:50]
@@ -64,9 +64,9 @@ def addorderslimit(df, percent):
     for i in range(1, len(df)):
         # SELL Signal. Close price more than upper band and trend=Downtrend
         if df.Close[i] <= df['BBL_14_2.0'][i] and df.EMASignal[i] == 2:
-            ordersignal[i] = df.Close[i]*(1-percent)
+            ordersignal[i] = df.Close[i] - df.Close[i]*percent
         # BUY Signal. Close price less than lower band and trend=Uptrend
-        if df.Close[i] >= df['BBL_14_2.0'][i] and df.EMASignal[i] == 1:
+        if df.Close[i] >= df['BBU_14_2.0'][i] and df.EMASignal[i] == 1:
             ordersignal[i] = df.Close[i]*(1+percent)
     df['ordersignal'] = ordersignal
 
@@ -96,10 +96,10 @@ fig = go.Figure(data=[go.Candlestick(x=dfpl.index,
                       go.Scatter(x=dfpl.index, y=dfpl['BBU_14_2.0'], line=dict(color='blue', width=1), name="BBUp")])
 
 fig.add_scatter(x=dfpl.index, y=dfpl['pointposbreak'], mode="markers",
-                marker=dict(size=4, color="MediumPurple"), name="Signal")
+                marker=dict(size=6, color="MediumPurple"), name="Signal")
 fig.update_xaxes(rangeslider_visible=False)
 fig.update_layout(autosize=False, width=600, height=600, margin=dict(l=50, r=30, b=100, t=100, pad=4), paper_bgcolor="black")
-fig.show()
+#fig.show()
 
 dfpl = dfSPY[:].copy()
 def SIGNAL():
@@ -119,7 +119,7 @@ class MyStrat(Strategy):
 
     def next(self):
         super().next()
-        TPSLRatio=2
+        TPSLRatio = 2
         perc = 0.02
 
         if len(self.trades) > 0:
@@ -141,8 +141,8 @@ class MyStrat(Strategy):
             self.sell(sl=sl1, tp=tp1, size=self.mysize)
 
 
-bt = Backtest(dfpl, MyStrat, cash=1000, margin=1/5, commission=0.00)
-stat=bt.run()
+bt = Backtest(dfpl, MyStrat, cash=1000, margin=1/5, commission=0.000)
+stat = bt.run()
 print(stat)
 
 #bt.plot()
