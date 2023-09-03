@@ -50,7 +50,7 @@ def addemasignal(df):
     emasignal = [0]*len(df)
     for i in range(0, len(df)):
         if df.EMA150[i]>df.EMA200[i]:
-            emasignal[1] = 2  # Uptrend
+            emasignal[i] = 2  # Uptrend
         elif df.EMA150[i] < df.EMA200[i]:
             emasignal[i] = 1  # Downtrend
     df["EMASignal"] = emasignal
@@ -70,7 +70,7 @@ def addorderslimit(df, percent):
             ordersignal[i] = df.Close[i]*(1+percent)
     df['ordersignal'] = ordersignal
 
-addorderslimit(dfSPY, 0.0)
+addorderslimit(dfSPY, 0.000)
 #print(dfSPY[dfSPY.ordersignal != 0.0])
 
 
@@ -141,7 +141,7 @@ class MyStrat(Strategy):
             self.sell(sl=sl1, tp=tp1, size=self.mysize)
 
 
-bt = Backtest(dfpl, MyStrat, cash=1000, margin=1/5, commission=0.000)
+bt = Backtest(dfpl, MyStrat, cash=100000, margin=1/5, commission=0.000)
 stat = bt.run()
 print(stat)
 

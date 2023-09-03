@@ -2,7 +2,7 @@
 #!pip install plotly
 #!pip install backtesting
 #!pip install bokeh==3.1.1
-
+# https://colab.research.google.com/drive/17trdYOnI9GW715eDQxa6RUg1div6nY2h#scrollTo=c0e7cae5
 
 
 
